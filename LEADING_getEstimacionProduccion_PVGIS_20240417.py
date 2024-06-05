@@ -325,10 +325,10 @@ import requests;
 import json;
 
 # Parametros de BBDD
-DB_HOST="localhost"
-DB_USER="leading0"
-DB_PASS="mynua556l031"
-DB_NAME="leading_db"
+DB_HOST="127.0.0.1"
+DB_USER="mi_ususario"
+DB_PASS="0000000"
+DB_NAME="datos"
 
 # Variables globales
 DIAS = 365;
