@@ -1,0 +1,4 @@
+Credenciales.txt
+*.log
+__pycache__
+DTOS/__pycache__
