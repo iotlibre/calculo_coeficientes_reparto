@@ -34,19 +34,11 @@ LIMIT_MIN_BAT_VOL = 49;
 param_id_community = sys.argv[1]; # Para filtrar por comunidad energética
 param_limit_max_power = sys.argv[2]; # W
 
-
 # Parametros de BBDD (usuario únicamente de lectura)
-#DB_HOST="cometa-3.reghost.pro"
-#DB_USER="cometa"
-#DB_PASS="12-1jn15jh"
-#DB_NAME="cometa"
-
-
-# Parametros de BBDD (usuario únicamente de lectura)
-DB_HOST="localhost"
-DB_USER="root"
-DB_PASS="root"
-DB_NAME="cometa"
+DB_HOST="127.0.0.1"
+DB_USER="mi_ususario"
+DB_PASS="0000000"
+DB_NAME="datos"
 
 try:
     
@@ -186,9 +178,9 @@ try:
 
         # Declaramos el objeto con los parametros correspondientes a la conexion
         modbusClient = ModbusClient()
-        modbusClient.host = "10.50.10.100"
-        modbusClient.port = 502
-        modbusClient.unit_id = 100
+        modbusClient.host = "127.0.0.1"
+        modbusClient.port = 1111
+        modbusClient.unit_id = 000
 
         # managing TCP sessions with call to c.open()/c.close()
         modbusClient.open()
