@@ -1,0 +1,58 @@
+05/28/2024 11:06:29 AM INFO  - Task: CaracterizacionComunidadesEnergeticasTask: -> Start exec. (28/05/2024 11:06:29) 
+05/28/2024 11:06:29 AM INFO 2024-05-28 11:06:29 --> ComunidadesEnergeticasServicio.obtenerParametrosEjecucionSimulacion: Inicio   de la ejecución del método
+05/28/2024 11:06:29 AM INFO Número de simulaciones pendientes: 1
+05/28/2024 11:06:29 AM INFO Random seleccionado: 0
+05/28/2024 11:06:29 AM INFO idEnergyCommunityProcess: 378
+05/28/2024 11:06:29 AM INFO idEnergyCommunity: 19
+05/28/2024 11:06:29 AM INFO Anyo de la simulación: 2024
+05/28/2024 11:06:29 AM INFO Update de la tabla de procesos: UPDATE leading_db.energy_community_process SET start = '2024-05-28 11:06:29'WHERE   id_energy_community_process = 378
+05/28/2024 11:06:29 AM INFO 2024-05-28 11:06:29 --> ComunidadesEnergeticasServicio.obtenerParametrosEjecucionSimulacion: Fin de la ejecución del método
+05/28/2024 11:06:29 AM INFO 
+
+05/28/2024 11:06:29 AM INFO 28/05/2024 11:06:29 -> Paso 1: CaracterizacionComunidadesEnergeticasTask: Obtenemos de base de datos los datos iniciales de la comunidad (Clientes y generadores)
+05/28/2024 11:06:29 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 28/05/2024 11:06:30 -> Paso 2: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo de cálculo de coeficientes de reparto calculados en base a la demanda energética
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 28/05/2024 11:06:30 -> Paso 3: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo para el cumplimiento de las condiciones (part. max. y min)
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 28/05/2024 11:06:30 -> Paso 4: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo para el reparto de la energía
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 28/05/2024 11:06:30 -> Paso 5: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo para el cálculo del excedente de energía
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 28/05/2024 11:06:30 -> Paso 6: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo para el cálculo del excedente de energía
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO Cuota de utilización calculada (en base a los CR): Cliente 132 : 28.929450013632962
+05/28/2024 11:06:30 AM INFO Cuota de utilización calculada (en base a los CR): Cliente 133 : 18.48028891949347
+05/28/2024 11:06:30 AM INFO Cuota de utilización calculada (en base a los CR): Cliente 134 : 47.59026106687346
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 28/05/2024 11:06:30 -> Paso 7: ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica: Almacenamos los valores obtenidos en base de datos
+05/28/2024 11:06:30 AM INFO 
+
+05/28/2024 11:06:30 AM INFO 2024-05-28 11:06:30 --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica:   Inicio de la ejecución del método
+05/28/2024 11:27:13 AM INFO 2024-05-28 11:27:13 --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica: Fin de la ejecución del método
+05/28/2024 11:27:13 AM INFO 
+
+05/28/2024 11:27:13 AM INFO 28/05/2024 11:27:13 -> Paso 8: ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica: Almacenamos los valores obtenidos en base de datos
+05/28/2024 11:27:13 AM INFO 
+
+05/28/2024 11:27:13 AM INFO 2024-05-28 11:27:13 --> ComunidadesEnergeticasServicio.establecerFinEjecucionSimulacion: Inicio de la ejecución del método
+05/28/2024 11:27:13 AM INFO sentenciaUpdateFinExito: UPDATE leading_db.energy_community_process SET event_id = 40, stop = '2024-05-28 11:27:13', result = 1000  WHERE id_energy_community_process = 378;
+05/28/2024 11:27:13 AM INFO 2024-05-28 11:27:13 --> ComunidadesEnergeticasServicio.establecerFinEjecucionSimulacion: Fin de la ejecución del método
+05/28/2024 11:27:13 AM INFO  - Task: CaracterizacionComunidadesEnergeticasTask: -> End exec. (28/05/2024 11:27:13) 
