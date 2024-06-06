@@ -78,11 +78,17 @@ def simulador():
         except:
             logging.exception("EVENT_ID=40 NO HAY COM. ENERG. PENDIENTES DE SIMULAR")
         
-        if (len(parametrosSimulacion)>3):
+        if parametrosSimulacion!= None:
+          if len(parametrosSimulacion)>3:
             idEnergyCommunityProcess = parametrosSimulacion[0]#""#"0" 
             idEnergyCommunity = parametrosSimulacion[1] #"2" 
             simulacion_fcDesde = parametrosSimulacion[2] #"2021-01-01 00:00:00"
             simulacion_fcHasta = parametrosSimulacion[3] #"2021-12-31 23:59:59"
+          else:
+            idEnergyCommunityProcess = ""#""#"0" 
+            idEnergyCommunity = "" #"2" 
+            simulacion_fcDesde = "" #"2021-01-01 00:00:00"
+            simulacion_fcHasta = "" #"2021-12-31 23:59:59"
         else:
             idEnergyCommunityProcess = ""#""#"0" 
             idEnergyCommunity = "" #"2" 
@@ -145,7 +151,7 @@ def simulador():
             logging.info("\n")
             logging.info(tiem.now().__format__('%d/%m/%Y %H:%M:%S')+" -> Paso 8: ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica: Almacenamos los valores obtenidos en base de datos")
             logging.info("\n")
-            ComunidadesEnergeticasServicio.establecerFinEjecucionSimulacion(agenteEjecucionMySql, idEnergyCommunityProcess, "1000")
+            ComunidadesEnergeticasServicio.actualizarProceso(agenteEjecucionMySql, idEnergyCommunityProcess,parametrosSimulacion[-1],"40", "1000")
                 
             #fin if: Si existen todos los parametros rellenos de base de datos
             
@@ -168,7 +174,7 @@ def simulador():
         #Obtenemos el agente de base de datos que utilizaremos durante toda la ejecución
         try:    
             agenteEjecucionMySql = MySqlAgent_AEI2022_LEADING()
-            ComunidadesEnergeticasServicio.establecerFinEjecucionSimulacion(agenteEjecucionMySql, idEnergyCommunity, "1001")
+            ComunidadesEnergeticasServicio.establecerFinEjecucionSimulacion(agenteEjecucionMySql, idEnergyCommunity,"40","1001")
             agenteEjecucionMySql.cursor.close()
 
         except Exception as err1:
