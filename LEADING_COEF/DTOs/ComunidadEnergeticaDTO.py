@@ -80,8 +80,8 @@ def coeficientConsumMin(Consum, bmin,pobreza):
     return cc
 
 def combinado(Consumos,bmin,bmax,pobreza):
-    coef1 = coeficientConsumMin(Consumos,bmin,pobreza)
-    coef2 = coeficientConsumMax(coef1,bmax,pobreza)
+    coef1 = coeficientConsumMax(Consumos,bmax,pobreza)
+    coef2 = coeficientConsumMin(coef1,bmin,pobreza)
     return coef2
 
 if bisiestoA(Anyo):
