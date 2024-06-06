@@ -2,6 +2,7 @@ import datetime
 from DTOs.constantes import bisiestoA
 import logging
 from DTOs.constantes import ANYOELEGIDO as Anyo
+import numpy as np
 
 # ''' Niveles de logging
 # Para obtener _TODO_ el detalle: level=logging.info
@@ -16,6 +17,72 @@ from DTOs.constantes import ANYOELEGIDO as Anyo
 #
 # @traductor jnaveiro
 #
+
+
+def coeficientConsumMax(Coef, bmax,pobreza):
+    Cmax=np.max(Coef)
+    if np.sum(Coef) == 0.0:
+        suma = 1.0
+    else:
+        suma = np.sum(Coef)
+        
+    control= Cmax/suma
+    n= len(Coef)
+    betas = n*bmax - (1-pobreza)
+
+    if control>bmax and betas >= 0.0:
+        Caux = Cmax - Coef
+
+        if np.sum(Caux) == 0.0:
+            Caux[:] = 0.1
+        
+        suma2 = np.sum(Caux)
+
+        cc = Caux/suma2
+        cc *= (-1*betas) 
+        cc += bmax
+    else:
+        if np.max(Coef) <= 0.0:
+            cc = (np.ones(len(Coef))/(len(Coef)))*(1-pobreza)
+        else:
+            cc=(Coef/suma)*(1-pobreza)
+        
+    return cc
+
+def coeficientConsumMin(Consum, bmin,pobreza):
+    Cmin=np.min(Consum)
+    if np.sum(Consum) == 0.0:
+        suma = 1.0
+    else:
+        suma = np.sum(Consum)
+        
+    control= Cmin/suma
+    n= len(Consum)
+    betas=(1-pobreza)-bmin*n
+
+    if control<bmin and betas >= 0.0:
+        Caux=Consum - Cmin
+
+        if np.sum(Caux) == 0.0:
+            Caux[:] = 0.1
+        
+        suma2 = np.sum(Caux)
+
+        cc = Caux/suma2
+        cc *= betas 
+        cc += bmin
+    else:
+        if np.max(Consum) <= 0.0:
+            cc = (np.ones(len(Consum))/(len(Consum)))*(1-pobreza)
+        else:
+            cc=(Consum/suma)*(1-pobreza)
+        
+    return cc
+
+def combinado(Consumos,bmin,bmax,pobreza):
+    coef1 = coeficientConsumMin(Consumos,bmin,pobreza)
+    coef2 = coeficientConsumMax(coef1,bmax,pobreza)
+    return coef2
 
 if bisiestoA(Anyo):
     NUM_DIAS = 366
@@ -81,6 +148,32 @@ class ComunidadEnergeticaDTO:
         self.cuotaParticipacion_min = 0 # No puede ser > 100/numClientes
         self.cuotaParticipacion_max = 100 # No puede ser < 100/numClientes
         self.porcentajeDedicadoPobrezaEnergetica = 0
+
+    def variacionObtencionCoef(self):
+        usuariosComunidad = self.getUsuariosComunidad()
+        MatrizConsumos = np.zeros((NUM_DIAS,NUM_HORAS,len(usuariosComunidad)))
+        for it_cliente in range(len(usuariosComunidad)):
+            matrizConsumos = np.zeros((NUM_DIAS,NUM_HORAS))
+            usuarioAux =usuariosComunidad[it_cliente]
+            consumosAux = usuarioAux.getConsumos()
+            for it_dia in range(NUM_DIAS):
+                for it_hora in range(NUM_HORAS):
+                    if(consumosAux[it_dia][it_hora] != None):
+                        consumo_diaHora = usuariosComunidad[it_cliente].getConsumos()[it_dia][it_hora].getValorDatoConsumoHorario()
+                        matrizConsumos[it_dia,it_hora] = consumo_diaHora
+            
+            MatrizConsumos[:,:,it_cliente] = matrizConsumos[:,:]
+        
+        for it_dia in range(NUM_DIAS):
+            for it_hora in range(NUM_HORAS):
+                minimo = 0.01 * self.cuotaParticipacion_min
+                maxima = 0.01 * self.cuotaParticipacion_max
+                pobreza = 0.01*self.getPorcentajeDedicadoPobrezaEnergetica()
+                MatrizBetas = combinado(MatrizConsumos[it_dia,it_hora,:] , minimo, maxima, pobreza)
+
+                for it_cliente in range(len(usuariosComunidad)):
+                    usuariosComunidad[it_cliente].getCoeficientesReparto()[it_dia][it_hora] = 100*MatrizBetas[it_cliente]
+
 
     def obtenerCoeficientesReparto_normalizadoByDemandaEnergia (self):
         """

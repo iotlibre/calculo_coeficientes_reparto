@@ -114,8 +114,9 @@ def simulador():
             logging.info("\n")
             logging.info(tiem.now().__format__('%d/%m/%Y %H:%M:%S')+" -> Paso 3: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo para el cumplimiento de las condiciones (part. max. y min)")
             logging.info("\n")
-            comunidadEnergetica.obtenerCoeficientesReparto_cumplirCondiciones_cuotaMinima(True, 1)
-            comunidadEnergetica.obtenerCoeficientesReparto_cumplirCondiciones_cuotaMaxima(True, 1)
+            comunidadEnergetica.variacionObtencionCoef()
+            # comunidadEnergetica.obtenerCoeficientesReparto_cumplirCondiciones_cuotaMinima(True, 1)
+            # comunidadEnergetica.obtenerCoeficientesReparto_cumplirCondiciones_cuotaMaxima(True, 1)
             #comunidadEnergetica.imprimirCoeficientesRepartoClientes()
 
             #Paso 4: Estimamos el reparto de la energía y lo imprimimos
