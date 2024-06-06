@@ -216,9 +216,9 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
                     energiaRepartida = ce.getUsuariosComunidad()[itUsuario].getEnergiaReparto()[itDiaConsumo][itHoraConsumo]
                     energiaExcedente = ce.getUsuariosComunidad()[itUsuario].getEnergiaReparto_excedentes()[itDiaConsumo][itHoraConsumo]
 
-                    coeficienteReparto = round(coeficienteReparto, 2)
-                    energiaRepartida = round(energiaRepartida, 2)
-                    energiaExcedente = round(energiaExcedente, 2)
+                    coeficienteReparto = coeficienteReparto
+                    energiaRepartida = energiaRepartida
+                    energiaExcedente = energiaExcedente
 
                     # Sólo si el día y la hora que en base de datos tienen consumos
                     if (consumosUsuarioIt[itDiaConsumo][itHoraConsumo] != None) :
@@ -265,7 +265,9 @@ def obtenerParametrosEjecucionSimulacion(agenteEjecucionMySql,anyo):
 
         # Por cada usuario cargamos su lista de consumos
         # private double consumos [][] = new double [3][7]
-        sqlCommunityProcess = "SELECT * FROM leading_db.energy_community_process WHERE (event_id = 35 AND result =1000) OR (event_id = 40 AND result =1001) ORDER BY id_energy_community_process desc"
+        # Consultamos si nos toca ejecutar
+        sqlCommunityProcess = "SELECT * FROM leading_db.energy_community_process a WHERE ((a.event_id = 35 AND a.result=1000) OR (a.event_id = 40 AND a.result =1001)) AND a.start = (SELECT max(b.start) FROM leading_db.energy_community_process b WHERE a.id_energy_community = b.id_energy_community)"
+        # sqlCommunityProcess = "SELECT * FROM leading_db.energy_community_process WHERE (event_id = 35 AND result =1000) OR (event_id = 40 AND result =1001) ORDER BY id_energy_community_process desc"
 
         rs_communityProcess = agenteEjecucionMySql.ejecutar(sqlCommunityProcess)
 
@@ -299,28 +301,35 @@ def obtenerParametrosEjecucionSimulacion(agenteEjecucionMySql,anyo):
         # Nos quedamos con el seleccionado por el random
         idEnergyCommunityProcess = vector_idEnergyCommunityProcess[nRandom]
         idEnergyCommunity = vector_idEnergyCommunity[nRandom]
-        logging.info("idEnergyCommunityProcess: " + str(idEnergyCommunityProcess))
         logging.info("idEnergyCommunity: " + str(idEnergyCommunity))
 
         # # Fecha comienzo y de fin
         logging.info("Anyo de la simulación: " + str(anyo))
+
+        # DateFormat sdfMYSQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        sFechaActual = datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')
+
+        # sqlUpdateConsumos = "UPDATE leading_db.energy_community_process " + "SET start = '" + sFechaActual + "'" + "WHERE   id_energy_community_process = " + idEnergyCommunityProcess
+        sqlUpdateConsumos = "INSERT INTO leading_db.energy_community_process (id_energy_community, event_id, start) VALUES ( " + str(idEnergyCommunity) + ", 40, '" + sFechaActual + "') "
+        # sqlUpdateConsumos = "UPDATE leading_db.energy_community_process " + "SET start = '" + sFechaActual + "'" + "WHERE   id_energy_community_process = " + idEnergyCommunityProcess
+        
+        # logging.info("Update de la tabla de procesos: " + sqlUpdateConsumos)
+        logging.info("Insert de la tabla de procesos: " + sqlUpdateConsumos)
+        agenteEjecucionMySql.ejecutar(sqlUpdateConsumos)
+        agenteEjecucionMySql.commitTransaction()
+        
+        sqlConsulta = "SELECT id_energy_community_process FROM leading_db.energy_community_process WHERE (id_energy_community = "+str(idEnergyCommunity)+" AND event_id = 40 AND start = '" + sFechaActual + "');"
+        auxiliar = agenteEjecucionMySql.ejecutar(sqlConsulta)
+        idEnergyCommunityProcess = str(auxiliar[0][0])
+        
+        
 
         stringToResult = []
         stringToResult.append(idEnergyCommunityProcess)
         stringToResult.append(idEnergyCommunity)
         stringToResult.append(str(anyo) + "-01-01" + " 00:00:00")
         stringToResult.append(str(anyo) + "-12-31" + " 23:59:59")
-
-        # DateFormat sdfMYSQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        sFechaActual = datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')
-
-        sqlUpdateConsumos = "UPDATE leading_db.energy_community_process " + "SET start = '" + sFechaActual + "'" + "WHERE   id_energy_community_process = " + idEnergyCommunityProcess
-        
-        # sqlUpdateConsumos = "UPDATE leading_db.energy_community_process " + "SET start = '" + str(stringToResult[2]) + "'" + "WHERE id_energy_community_process = " + str(stringToResult[0])
-
-        logging.info("Update de la tabla de procesos: " + sqlUpdateConsumos)
-        agenteEjecucionMySql.ejecutar(sqlUpdateConsumos)
-        agenteEjecucionMySql.commitTransaction()
+        stringToResult.append(sFechaActual)
 
         # Mensaje de log al inicio del método
         logging.info(sFechaActual + " --> ComunidadesEnergeticasServicio.obtenerParametrosEjecucionSimulacion: Fin de la ejecución del método")
@@ -330,7 +339,34 @@ def obtenerParametrosEjecucionSimulacion(agenteEjecucionMySql,anyo):
     except Exception as e:
         logging.exception(e)
 
-def  establecerFinEjecucionSimulacion (agenteEjecucionMySql, idEnergyCommunityProcess, codigo):
+def actualizarProceso(agenteEjecucionMySql, idEnergyCommunityProcess, start, event_id, codigo):
+    try:
+        # Mensaje de log al inicio del método
+        logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')+" --> ComunidadesEnergeticasServicio.establecerFinEjecucionSimulacion: Inicio de la ejecución del método")
+
+        # Establecemos la fecha de inicio de la ejecución en la correspondiente entrada
+        # DateFormat sdfMYSQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        # String sFechaActual = sdfMYSQL.format(new Date())
+        sFechaActual = datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')
+
+        sqlUpdateProcesoFinExito = "UPDATE leading_db.energy_community_process SET stop = '" + sFechaActual + "' WHERE (id_energy_community_process = " + idEnergyCommunityProcess + " AND event_id =" + str(event_id) +" AND start='"+ start + "');"
+
+        logging.info ("sentenciaInsertFinExito: "+sqlUpdateProcesoFinExito)
+        
+        # LANZAMOS LA ACTUALIZACION DEL REGISTRO 
+        agenteEjecucionMySql.ejecutar(sqlUpdateProcesoFinExito)
+        agenteEjecucionMySql.commitTransaction()
+
+        establecerFinEjecucionSimulacion(agenteEjecucionMySql, idEnergyCommunityProcess, event_id, codigo)
+
+        # Mensaje de log al inicio del método
+        logging.info (datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')+" --> ComunidadesEnergeticasServicio.actualizarProceso: Fin de la ejecución del método")
+
+    except Exception as e:
+        logging.exception(e)
+
+
+def  establecerFinEjecucionSimulacion (agenteEjecucionMySql, idEnergyCommunityProcess, event_id, codigo):
     """
         author: fdgregorio
         
@@ -356,11 +392,11 @@ def  establecerFinEjecucionSimulacion (agenteEjecucionMySql, idEnergyCommunityPr
         # Establecemos la fecha de inicio de la ejecución en la correspondiente entrada
         # DateFormat sdfMYSQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         # String sFechaActual = sdfMYSQL.format(new Date())
-        sFechaActual = datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')
+        # sFechaActual = datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')
 
-        sqlUpdateProcesoFinExito = "UPDATE leading_db.energy_community_process " + "SET event_id = 40, " + "stop = '" + sFechaActual + "'," + " result = " + codigo + " " + " WHERE id_energy_community_process = " + idEnergyCommunityProcess + ";"
+        sqlUpdateProcesoFinExito = "UPDATE leading_db.energy_community_process SET result = " + codigo + " WHERE (id_energy_community_process = " + idEnergyCommunityProcess + " AND event_id =" + str(event_id) + ");"
 
-        logging.info ("sentenciaUpdateFinExito: "+sqlUpdateProcesoFinExito)
+        logging.info ("sentenciaInsertFinExito: "+sqlUpdateProcesoFinExito)
 
         # LANZAMOS LA ACTUALIZACION DEL REGISTRO 
         agenteEjecucionMySql.ejecutar(sqlUpdateProcesoFinExito)
@@ -371,4 +407,3 @@ def  establecerFinEjecucionSimulacion (agenteEjecucionMySql, idEnergyCommunityPr
     
     except Exception as e:
         logging.exception(e)
-
