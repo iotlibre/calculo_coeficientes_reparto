@@ -205,20 +205,16 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
             id_user = ce.getUsuariosComunidad()[itUsuario].getIdUsuario()
 
             #Actualizar consumos
-            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s"
+            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s ;"
 
             listaInfo = []
-
+            
             for itDiaConsumo in range(numDias):
                 numHoras = len(consumosUsuarioIt[itDiaConsumo])
                 for itHoraConsumo in range(numHoras):
                     coeficienteReparto = ce.getUsuariosComunidad()[itUsuario].getCoeficientesReparto()[itDiaConsumo][itHoraConsumo]
                     energiaRepartida = ce.getUsuariosComunidad()[itUsuario].getEnergiaReparto()[itDiaConsumo][itHoraConsumo]
                     energiaExcedente = ce.getUsuariosComunidad()[itUsuario].getEnergiaReparto_excedentes()[itDiaConsumo][itHoraConsumo]
-
-                    coeficienteReparto = coeficienteReparto
-                    energiaRepartida = energiaRepartida
-                    energiaExcedente = energiaExcedente
 
                     # Sólo si el día y la hora que en base de datos tienen consumos
                     if (consumosUsuarioIt[itDiaConsumo][itHoraConsumo] != None) :
