@@ -1,4 +1,5 @@
-Credenciales.txt
+*.txt
+*.ini
 *.log
 __pycache__
 DTOS/__pycache__

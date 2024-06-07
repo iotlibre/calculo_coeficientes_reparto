@@ -1,5 +1,4 @@
-config_DB copy.ini
-config_DB.ini
+*.ini
 *.log
 __pycache__
 DTOS/__pycache__
