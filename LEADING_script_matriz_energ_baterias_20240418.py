@@ -101,14 +101,10 @@ import mysql.connector
 
 import random
 
-
-
+from lecturaIni import lecturaIni
 
 # Parametros de BBDD
-DB_HOST="127.0.0.1"
-DB_USER="mi_ususario"
-DB_PASS="0000000"
-DB_NAME="datos"
+DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME = lecturaIni()
 
 # Variables globales
 #id_energy_community_process = 0;

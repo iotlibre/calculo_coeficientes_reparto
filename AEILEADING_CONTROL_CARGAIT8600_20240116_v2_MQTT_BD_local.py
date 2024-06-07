@@ -34,11 +34,11 @@ LIMIT_MIN_BAT_VOL = 49;
 param_id_community = sys.argv[1]; # Para filtrar por comunidad energética
 param_limit_max_power = sys.argv[2]; # W
 
-# Parametros de BBDD (usuario únicamente de lectura)
-DB_HOST="127.0.0.1"
-DB_USER="mi_ususario"
-DB_PASS="0000000"
-DB_NAME="datos"
+
+from lecturaIni import lecturaIni
+
+# Parametros de BBDD
+DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME = lecturaIni("soloLectura.ini")
 
 try:
     
@@ -169,6 +169,8 @@ try:
         import time;
         import sys;
 
+
+
         # Funcion encargada de llevar a cabo la conversion 16uint->32float
         def convert(s):
             i = int(s, 16)                   # convert from hex to a Python int
@@ -178,9 +180,10 @@ try:
 
         # Declaramos el objeto con los parametros correspondientes a la conexion
         modbusClient = ModbusClient()
-        modbusClient.host = "127.0.0.1"
-        modbusClient.port = 1111
-        modbusClient.unit_id = 000
+        MD_USER,MD_PASS,MD_HOST,MD_PORT,MD_UNID = lecturaIni("soloLectura.ini")
+        modbusClient.host = MD_HOST
+        modbusClient.port = int(MD_PORT)
+        modbusClient.unit_id = int(MD_UNID)
 
         # managing TCP sessions with call to c.open()/c.close()
         modbusClient.open()
