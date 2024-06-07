@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Inicio sercio_comunidades"
+echo "Inicio servicio_comunidades"
 
 while true
 do
