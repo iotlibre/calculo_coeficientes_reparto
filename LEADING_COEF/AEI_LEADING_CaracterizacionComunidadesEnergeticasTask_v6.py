@@ -103,12 +103,12 @@ def simulador():
             logging.info("\n")
             comunidadEnergetica = ComunidadesEnergeticasServicio.obtenerDatosComunidadEnergeticaDesdeBBDD(agenteEjecucionMySql, idEnergyCommunity, simulacion_fcDesde, simulacion_fcHasta)
             
-            #Paso 2: Ejecutamos e imprimimos el cálculo del coeficiente de reparto
-            logging.info("\n")
-            logging.info(tiem.now().__format__('%d/%m/%Y %H:%M:%S')+" -> Paso 2: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo de cálculo de coeficientes de reparto calculados en base a la demanda energética")
-            logging.info("\n")
-            comunidadEnergetica.obtenerCoeficientesReparto_normalizadoByDemandaEnergia()
-            #comunidadEnergetica.imprimirCoeficientesRepartoClientes()
+            # #Paso 2: Ejecutamos e imprimimos el cálculo del coeficiente de reparto
+            # logging.info("\n")
+            # logging.info(tiem.now().__format__('%d/%m/%Y %H:%M:%S')+" -> Paso 2: CaracterizacionComunidadesEnergeticasTask: Ejecutamos el algoritmo de cálculo de coeficientes de reparto calculados en base a la demanda energética")
+            # logging.info("\n")
+            # comunidadEnergetica.obtenerCoeficientesReparto_normalizadoByDemandaEnergia()
+            # #comunidadEnergetica.imprimirCoeficientesRepartoClientes()
             
             #Paso 3: Ejecutamos los cálculos para el cumplimiento de las condiciones establecidas
             logging.info("\n")
