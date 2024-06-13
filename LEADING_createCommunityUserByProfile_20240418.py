@@ -270,7 +270,18 @@ try:
                 registroIdUser = cursor.fetchone()
                 idNewUser = registroIdUser[0]
                 
-           
+                # UPDATE table_name
+                SentenciaActualizar = "UPDATE leading_db.user "
+                # SET column1 = value1, column2 = value2, ...
+                SentenciaSet = "SET id_energy_community = " + str(idComunidad)
+                # WHERE condition;
+                SentenciaWhere = " WHERE id_user = " + str(int(idNewUser)) + ";"
+                SentenciaActualizarFinal = SentenciaActualizar + SentenciaSet + SentenciaWhere
+
+                cursor.execute(SentenciaActualizarFinal)
+
+                InsertarDatos = False
+
             # Si no existe, generamos un nuevo registro en el que añadimos el cups del perfil
             except TypeError as e:
                 # Obtenemos de la secuencia de usuarios el id del usuario que se creará
@@ -287,7 +298,8 @@ try:
                 #print ("sentenciaInsertNuevoUsuario: " + str(sentenciaInsertNuevoUsuario))
                 cursor.execute(sentenciaInsertNuevoUsuario)
                 
-        
+                InsertarDatos = True
+
         else:
             # Obtenemos de la secuencia de usuarios el id del usuario que se creará
             selectSecuenciaUser = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'leading_db' AND TABLE_NAME = 'user';";
@@ -303,6 +315,8 @@ try:
             #print ("sentenciaInsertNuevoUsuario: " + str(sentenciaInsertNuevoUsuario));
             cursor.execute(sentenciaInsertNuevoUsuario)
 
+            InsertarDatos = True
+
         
         # Obtenemos los datos del perfil y los asociamos al nuevo usuario
         sentenciaObtenerPerfilUsuario = "SELECT consumer_profile_consumption.id_consumer_profile_consumption, consumer_profile_consumption.id_consumer_profile, consumer_profile_consumption.year, consumer_profile_consumption.month, consumer_profile_consumption.day, consumer_profile_consumption.hour, consumer_profile_consumption.consumption FROM leading_db.consumer_profile_consumption WHERE id_consumer_profile = " + str(id_consumer_profile);
@@ -313,78 +327,79 @@ try:
 
         # Recorremos cada uno de los datos correspondientes al perfil y los almacenamos en un vector de tuplas de datos
         VectorDatosConsumo = []
-        
-        for datoPerfilUsario in registroDatosPerfilUsuario:
-            anyo = datoPerfilUsario[2]
-            anyo = int(anyo)
-            mes = datoPerfilUsario[3]
-            mes = int(mes);
-            dia = datoPerfilUsario[4]
-            dia = int(dia);
-            hora = datoPerfilUsario[5]
-            hora = int(hora);
 
-            
-            if anyo != 0:  # Si tenemos datos reales (el año de la tabla consumer_profile_consumption es distinto de 0)
-                if mes == 2 and dia ==29: # significa que tenemos datos reales de un año bisiesto                        
-                    pass
+        if InsertarDatos:
+        
+            for datoPerfilUsario in registroDatosPerfilUsuario:
+                anyo = datoPerfilUsario[2]
+                anyo = int(anyo)
+                mes = datoPerfilUsario[3]
+                mes = int(mes);
+                dia = datoPerfilUsario[4]
+                dia = int(dia);
+                hora = datoPerfilUsario[5]
+                hora = int(hora);
+
+
+                if anyo != 0:  # Si tenemos datos reales (el año de la tabla consumer_profile_consumption es distinto de 0)
+                    if mes == 2 and dia ==29: # significa que tenemos datos reales de un año    bisiesto                        
+                        pass
+                    else:
+                        # Llamamos a la función que nos devuelve un consumo para la fecha indicada a partir de los datos    del año anterior y teniendo en cuenta festivos y fines de semana
+                        valorConsumo = consumoAdaptado (id_consumer_profile, comunidadAutonoma, anyoCargaDatos, anyo, mes,  dia, hora)
+
+                        # Componemos la fecha a insertar
+                        dateConsumo = date(int(anyoCargaDatos), mes, dia);
+                        dateConsumo = str(dateConsumo) + " " + str(hora) + ":" + "00:00";
+
+                        #Componemos el vector de datos a insertar
+                        TuplaVectorDatosConsumo = [str(idNewUser),str(dateConsumo),str(valorConsumo),0,0,0]
+                        #print(TuplaVectorDatosConsumo)
+                        VectorDatosConsumo.append(TuplaVectorDatosConsumo)
+                        #print(VectorDatosConsumo)
+
+
                 else:
-                    # Llamamos a la función que nos devuelve un consumo para la fecha indicada a partir de los datos del año anterior y teniendo en cuenta festivos y fines de semana
-                    valorConsumo = consumoAdaptado (id_consumer_profile, comunidadAutonoma, anyoCargaDatos, anyo, mes, dia, hora)
-                
+                    valorConsumo = datoPerfilUsario[6]
+
                     # Componemos la fecha a insertar
                     dateConsumo = date(int(anyoCargaDatos), mes, dia);
                     dateConsumo = str(dateConsumo) + " " + str(hora) + ":" + "00:00";
-                    
+
+
                     #Componemos el vector de datos a insertar
                     TuplaVectorDatosConsumo = [str(idNewUser),str(dateConsumo),str(valorConsumo),0,0,0]
                     #print(TuplaVectorDatosConsumo)
                     VectorDatosConsumo.append(TuplaVectorDatosConsumo)
-                    #print(VectorDatosConsumo)
-                            
-                
-            else:
-                valorConsumo = datoPerfilUsario[6]
-                
-                # Componemos la fecha a insertar
-                dateConsumo = date(int(anyoCargaDatos), mes, dia);
-                dateConsumo = str(dateConsumo) + " " + str(hora) + ":" + "00:00";
+                    #print(VectorDatosConsumo)        
 
-                
-                #Componemos el vector de datos a insertar
-                TuplaVectorDatosConsumo = [str(idNewUser),str(dateConsumo),str(valorConsumo),0,0,0]
-                #print(TuplaVectorDatosConsumo)
-                VectorDatosConsumo.append(TuplaVectorDatosConsumo)
-                #print(VectorDatosConsumo)        
-    
-            
-            # Si el año es bisiesto, duplicamos los datos del día 28/02 en el día 29/02
-            
-            if resto==0 and mes==2 and dia==28:
-                #print('Año bisiesto. Añadimos un nuevo registro para el día 29 de febrero.')
-                # Componemos la fecha a insertar
-                dateConsumo = date(int(anyoCargaDatos), 2, 29);
-                dateConsumo = str(dateConsumo) + " " + str(hora) + ":" + "00:00";
-                #print ("Fecha del dato: " + str(dateConsumo));
-                
-                # Ejecutamos el insert en base de datos para cada nuevo dato del nuevo usuario
-            
-                sentenciaInsertNuevoDatoPerfil = "INSERT INTO leading_db.user_data (`id_user`, `timestamp`, `consumption`, `partition_coefficient`, `partition_energy`, `partition_surplus_energy`) VALUES( ";
-                sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + str(idNewUser) + ", ";
-                sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + "'" + str(dateConsumo) + "', ";
-                sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + str(valorConsumo) + ", ";
-                sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + " 0, 0, 0); ";
-                #print ("sentenciaInsertNuevoDatoPerfil: " + str(sentenciaInsertNuevoDatoPerfil));  
-                cursor.execute(sentenciaInsertNuevoDatoPerfil)
+
+                # Si el año es bisiesto, duplicamos los datos del día 28/02 en el día 29/02
+
+                if resto==0 and mes==2 and dia==28:
+                    #print('Año bisiesto. Añadimos un nuevo registro para el día 29 de febrero.')
+                    # Componemos la fecha a insertar
+                    dateConsumo = date(int(anyoCargaDatos), 2, 29);
+                    dateConsumo = str(dateConsumo) + " " + str(hora) + ":" + "00:00";
+                    #print ("Fecha del dato: " + str(dateConsumo));
+
+                    # Ejecutamos el insert en base de datos para cada nuevo dato del nuevo usuario
+
+                    sentenciaInsertNuevoDatoPerfil = "INSERT INTO leading_db.user_data (`id_user`, `timestamp`,     `consumption`, `partition_coefficient`, `partition_energy`, `partition_surplus_energy`) VALUES( ";
+                    sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + str(idNewUser) + ", ";
+                    sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + "'" + str(dateConsumo) + "', ";
+                    sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + str(valorConsumo) + ", ";
+                    sentenciaInsertNuevoDatoPerfil = sentenciaInsertNuevoDatoPerfil + " 0, 0, 0); ";
+                    #print ("sentenciaInsertNuevoDatoPerfil: " + str(sentenciaInsertNuevoDatoPerfil));  
+                    cursor.execute(sentenciaInsertNuevoDatoPerfil)
 
         
-        
-        # Ejecutamos el insert en base de datos para todos los datos del nuevo usuario que están almacenados en el vector de datos a insertar
-        #print('Hacemos el EXECUTEMANY')
-        sentenciaInsertNuevoDatoPerfil = "INSERT INTO leading_db.user_data (`id_user`, `timestamp`, `consumption`, `partition_coefficient`, `partition_energy`, `partition_surplus_energy`) VALUES(%s, %s, %s, %s, %s, %s)";
-        #print(sentenciaInsertNuevoDatoPerfil)
-        cursor.executemany(sentenciaInsertNuevoDatoPerfil, VectorDatosConsumo)
-        #print('EXECUTEMANY ejecutado')
+            # Ejecutamos el insert en base de datos para todos los datos del nuevo usuario que están almacenados en el vector de datos a insertar
+            #print('Hacemos el EXECUTEMANY')
+            sentenciaInsertNuevoDatoPerfil = "INSERT INTO leading_db.user_data (`id_user`, `timestamp`, `consumption`, `partition_coefficient`, `partition_energy`, `partition_surplus_energy`) VALUES(%s, %s, %s, %s, %s, %s)";
+            #print(sentenciaInsertNuevoDatoPerfil)
+            cursor.executemany(sentenciaInsertNuevoDatoPerfil, VectorDatosConsumo)
+            #print('EXECUTEMANY ejecutado')
         
         
   
