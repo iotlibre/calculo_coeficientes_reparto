@@ -1,4 +1,4 @@
-Explicación y licencia del código de simulación de consumos y generación
+Explicación y licencia del código de calculo de coeficientes de reparto.
 La licencia del presente programa es GPL v3:
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
