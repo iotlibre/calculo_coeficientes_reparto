@@ -221,7 +221,7 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
                         # CODIGO OPTIMIZADO CON PK (da más o menos igual de rendimiento)
                         idUserData = ce.getUsuariosComunidad()[itUsuario].getConsumos()[itDiaConsumo][itHoraConsumo].getIdUserData()
                         
-                        tuplaAux = (str(coeficienteReparto),str(energiaRepartida),str(energiaExcedente),str(idUserData))
+                        tuplaAux = [str(coeficienteReparto),str(energiaRepartida),str(energiaExcedente),str(idUserData)]
                         
                         listaInfo.append(tuplaAux)
                         
