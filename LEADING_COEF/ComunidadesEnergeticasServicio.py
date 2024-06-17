@@ -206,7 +206,7 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
             id_user = ce.getUsuariosComunidad()[itUsuario].getIdUsuario()
 
             #Actualizar consumos
-            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s ;"
+            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s"
 
             listaInfo = []
             
@@ -222,7 +222,7 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
                         # CODIGO OPTIMIZADO CON PK (da más o menos igual de rendimiento)
                         idUserData = ce.getUsuariosComunidad()[itUsuario].getConsumos()[itDiaConsumo][itHoraConsumo].getIdUserData()
                         
-                        tuplaAux = [str(coeficienteReparto),str(energiaRepartida),str(energiaExcedente),str(idUserData)]
+                        tuplaAux = (str(coeficienteReparto),str(energiaRepartida),str(energiaExcedente),str(idUserData))
                         
                         listaInfo.append(tuplaAux)
                         
