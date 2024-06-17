@@ -206,7 +206,7 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
             id_user = ce.getUsuariosComunidad()[itUsuario].getIdUsuario()
 
             #Actualizar consumos
-            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s"
+            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = ?, partition_energy = ? , partition_surplus_energy = ? WHERE id_user_data = ?"
 
             listaInfo = []
             
