@@ -307,11 +307,15 @@ try:
             cursor.execute(selectSecuenciaUser)
             idNewUser = cursor.fetchone()[0];
             #print("Id del nuevo usuario a crear devuelto por la secuencia de la tabla de usuarios:", idNewUser);
+            
+            # sentenciaObtenerProfiles = "SELECT description FROM leading_db.consumer_profile WHERE id_consumer_profile = " + str(id_consumer_profile) + ";"
+            # cursor.execute(sentenciaObtenerProfiles)
+            # DescripcionPerfil = cursor.fetchone()[0];
 
             # Creamos un nuevo usuario en base de datos
             sentenciaInsertNuevoUsuario = "INSERT INTO leading_db.user (`id_energy_community`, `name`, `surname1`, `surname2`,  `nif`, `address`, `zip`, `tel`, `email`, `cups`, `energy_poverty_beneficiary`, `power_tariff_1`, `power_tariff_2`, `energy_tariff_p1`, `energy_tariff_p2`, `energy_tariff_p3`, `exp_energy_tariff`) VALUES ( ";
             sentenciaInsertNuevoUsuario = sentenciaInsertNuevoUsuario + str(idComunidad) + ", ";
-            sentenciaInsertNuevoUsuario = sentenciaInsertNuevoUsuario + " 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', " + str(idNewUser) + ", 0, 0, 0, 0, 0, 0, 0);";
+            sentenciaInsertNuevoUsuario = sentenciaInsertNuevoUsuario + " 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', 'GEN_AUT', '" + str(id_consumer_profile) + "-" + str(idNewUser) + "' , 0, 0, 0, 0, 0, 0, 0);";
             #print ("sentenciaInsertNuevoUsuario: " + str(sentenciaInsertNuevoUsuario));
             cursor.execute(sentenciaInsertNuevoUsuario)
 

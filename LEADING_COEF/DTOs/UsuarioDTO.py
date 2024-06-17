@@ -57,6 +57,7 @@ class UsuarioDTO:
     def __init__(self):
         self.idUsuario = ""
         self.dsUsuario = ""
+        self.cupsUsuario = ""
         self.consumos = [[None for i in range(NUMHORAS)] for j in range(NUMDIAS)]
         self.coeficientesReparto = [[None for i in range(NUMHORAS)] for j in range(NUMDIAS)]
         self.energiaReparto =  [[None for i in range(NUMHORAS)] for j in range(NUMDIAS)]
@@ -86,6 +87,12 @@ class UsuarioDTO:
 
     def setIdUsuario(self, idUsuario):
         self.idUsuario = idUsuario
+
+    def getCupsUsuario(self):
+        return str(self.cupsUsuario)
+
+    def setCupsUsuario(self,cupsUsuario):
+        self.cupsUsuario = cupsUsuario
 
     def getDsUsuario(self):
         return str(self.dsUsuario)

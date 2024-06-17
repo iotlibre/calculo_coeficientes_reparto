@@ -121,7 +121,7 @@ def obtenerDatosComunidadEnergeticaDesdeBBDD (agenteEjecucionMySql, idComunidadE
 
 
         # Paso 3: Obtenemos los datos relativos a los usuarios de la comunidad
-        sqlDatosUsuariosComunidad = "SELECT users.id_user, CONCAT(users.name, ' ', users.surname1, ' ', users.surname2) as nombreCompleto "+ " FROM leading_db.user as users " + " where users.id_energy_community = " + idComunidadEnergetica
+        sqlDatosUsuariosComunidad = "SELECT users.id_user, users.cups, CONCAT(users.name, ' ', users.surname1, ' ', users.surname2) as nombreCompleto "+ " FROM leading_db.user as users " + " where users.id_energy_community = " + idComunidadEnergetica
 
         rs_usuarios = agenteEjecucionMySql.ejecutar(sqlDatosUsuariosComunidad)
         # Devolvemos los datos tratados
@@ -130,7 +130,8 @@ def obtenerDatosComunidadEnergeticaDesdeBBDD (agenteEjecucionMySql, idComunidadE
             # Declaramos el objeto a devolver en el listado
             usuarioDTO = UsuarioDTO()
             usuarioDTO.setIdUsuario(str(rs[0]))
-            usuarioDTO.setDsUsuario(str(rs[1]))
+            usuarioDTO.setCupsUsuario(str(rs[1]))
+            usuarioDTO.setDsUsuario(str(rs[2]))
 
             # Por cada usuario cargamos su lista de consumos
             # private double consumos [][] = new double [3][7]

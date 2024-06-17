@@ -560,7 +560,7 @@ class ComunidadEnergeticaDTO:
         """
         usuariosComunidad = self.getUsuariosComunidad()
         for it_cliente in range(len(usuariosComunidad)):
-            logging.info("Cuota de utilización calculada (en base a los CR): Cliente " + str(usuariosComunidad[it_cliente].getIdUsuario()) + " : " + str(usuariosComunidad[it_cliente].getCuotaParticipacion_calculadaCR()))
+            logging.info("Cuota de utilización calculada (en base a los CR): Cliente " + str(usuariosComunidad[it_cliente].getIdUsuario())+ " ( de perfil " + str(usuariosComunidad[it_cliente].getCupsUsuario()).split("-")[0] + ") : " + str(usuariosComunidad[it_cliente].getCuotaParticipacion_calculadaCR()))
 
     def getIdComunidadEnergetica(self):
         return self.idComunidadEnergetica
