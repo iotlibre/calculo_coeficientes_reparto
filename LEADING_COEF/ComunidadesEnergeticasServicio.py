@@ -206,8 +206,8 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
             id_user = ce.getUsuariosComunidad()[itUsuario].getIdUsuario()
 
             #Actualizar consumos
-            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = ?, partition_energy = ? , partition_surplus_energy = ? WHERE id_user_data = ?"
-
+            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s ; "
+            # sqlUpdateConsumos = " INSERT INTO leading_db.user_data (partition_coefficient, partition_energy,partition_surplus_energy,id_user_data) VALUES (%s, %s, %s) ON CONFLICT(first_name) DO UPDATE SET hire_date = EXCLUDED.hire_date"
             listaInfo = []
             
             for itDiaConsumo in range(numDias):
@@ -225,9 +225,14 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
                         tuplaAux = (str(coeficienteReparto),str(energiaRepartida),str(energiaExcedente),str(idUserData))
                         
                         listaInfo.append(tuplaAux)
-                        
-            agenteEjecucionMySql.ejecutarMuchos(sqlUpdateConsumos,listaInfo)
-            agenteEjecucionMySql.commitTransaction()
+                        agenteEjecucionMySql.ejecutar(sqlUpdateConsumos%tuplaAux)
+                        agenteEjecucionMySql.commitTransaction()
+
+            # comando = ""
+            # for i in listaInfo:
+            #     comando += i
+            # agenteEjecucionMySql.ejecutarMuchos(sqlUpdateConsumos,listaInfo)
+            
             # pocos = "SELECT * FROM leading_db.user_data WHERE id_user_data = " + str(idUserData)
             # print(agenteEjecucionMySql.ejecutar(pocos))
             print("Se ha realizado la actualización del ususario: ",id_user)
