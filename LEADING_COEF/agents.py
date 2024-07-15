@@ -1,4 +1,4 @@
-import mariadb
+import mysql.connector
 import sys
 import os
 from datetime import datetime as tiem
@@ -85,9 +85,9 @@ class MySqlAgent_AEI2022_LEADING(metaclass=SingletonMeta):
         config = configparser.ConfigParser()
         config.read(archivo2)
 
-        # Connect to MariaDB Platform
+        # Connect to mysql.connector Platform
         try:
-            self.conn = mariadb.connect(
+            self.conn = mysql.connector.connect(
                             user=config.get('Database_Server','user'),
                             password=config.get('Database_Server','password'),
                             host=config.get('Database_Server','host'),
@@ -96,7 +96,7 @@ class MySqlAgent_AEI2022_LEADING(metaclass=SingletonMeta):
             self.cursor = self.conn.cursor()
             print("conexión realizada")
 
-        except mariadb.Error as e:
+        except mysql.connector.Error as e:
             logging.error(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
 
@@ -177,7 +177,8 @@ class MySqlAgent_AEI2022_LEADING(metaclass=SingletonMeta):
             self.cursor.executemany(sql,listaarg)
             try:
                 #En caso de devolver algún resultado lo devuelve todos como una lista de valores
-                devuelve=  self.cursor.fetchall()
+                # devuelve=  self.cursor.fetchall()
+                devuelve = self.cursor.rowcount
                 # Devolvemos
                 return devuelve
             except:
