@@ -171,6 +171,66 @@ def obtenerDatosComunidadEnergeticaDesdeBBDD (agenteEjecucionMySql, idComunidadE
 
         raise SystemExit(e)
 
+def almacenarDatosCalculadosTxt(ce,anyo):
+    """
+        author: fdgregorio
+        
+        traductor: jnaveiro
+    
+        Definición: Metodo encargado de alamcenar en base de datos todos los cálculos realizados durante la simulación junto al dato del consumo del usuario de la comunidad.
+        
+        Variables de entrada: agenteEjecucionMySql, ce(ComunidadEnergeticaDTO)
+        
+        Variables de salida: Ninguno
+        
+        Objetos relevantes:
+        
+            1. ce
+            2. agenteEjecucionMySql
+        
+        Librerías que se utilizan:
+        
+            1. Simulador.DTOs.ComunidadEnergeticaDTO
+            2. datetime
+            3. logging
+    """
+    try:
+        # Mensaje de log al inicio del método
+        logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S') + " --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosTxt:   Inicio de la ejecución del método")
+        # Recorremos los distintos clientes de la comunidad
+        with open("CAU"+str(ce.getIdComunidadEnergetica())+"_"+str(anyo)+".txt","w") as f:
+            fecha0 = datetime.datetime(year=anyo,month=1,day=1,hour=0,minute=0,second=1)
+            for itUsuario in range(len(ce.getUsuariosComunidad())):
+                horasSimul = 0
+                fecha = datetime.datetime(year=anyo,month=1,day=1,hour=0,minute=0,second=1)
+                consumosUsuarioIt = ce.getUsuariosComunidad()[itUsuario].getConsumos()
+                numDias = len(consumosUsuarioIt)
+                CUPS = ce.getUsuariosComunidad()[itUsuario].getCupsUsuario()
+
+                for itDiaConsumo in range(numDias):
+                    numHoras = len(consumosUsuarioIt[itDiaConsumo])
+                    # if (fecha.month!=2 or fecha.day!=29):
+                    for itHoraConsumo in range(numHoras):
+                        coeficienteReparto = ce.getUsuariosComunidad()[itUsuario].getCoeficientesReparto()[itDiaConsumo][itHoraConsumo]
+                        horasSimul += 1
+                        f.write("\n{:22s};{:4s};{:.6f}".format(CUPS[-22:],str(10000+horasSimul)[-4:],coeficienteReparto/100))
+                    
+                    fecha += datetime.timedelta(days=1)
+
+        # Elimina la primera linea en blanco
+        g = open("CAU"+str(ce.getIdComunidadEnergetica())+"_"+str(anyo)+".txt","r")
+        todo = g.readlines()
+        g.close()
+        with open("CAU"+str(ce.getIdComunidadEnergetica())+"_"+str(anyo)+".txt","w") as g:
+            g.writelines(todo[1:])
+
+        # Mensaje de log al inicio del método
+        logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S') + " --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica: Fin de la ejecución del método")
+
+
+    except Exception as e:
+        raise SystemExit(e)
+
 def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
     """
         author: fdgregorio
@@ -325,6 +385,62 @@ def obtenerParametrosEjecucionSimulacion(agenteEjecucionMySql,anyo):
         idEnergyCommunityProcess = str(auxiliar[0][0])
         
         
+
+        stringToResult = []
+        stringToResult.append(idEnergyCommunityProcess)
+        stringToResult.append(idEnergyCommunity)
+        stringToResult.append(str(anyo) + "-01-01" + " 00:00:00")
+        stringToResult.append(str(anyo) + "-12-31" + " 23:59:59")
+        stringToResult.append(sFechaActual)
+
+        # Mensaje de log al inicio del método
+        logging.info(sFechaActual + " --> ComunidadesEnergeticasServicio.obtenerParametrosEjecucionSimulacion: Fin de la ejecución del método")
+
+        # Damos por finalizada la ejecución
+        return stringToResult
+    except Exception as e:
+        logging.exception(e)
+
+def obtenerParametrosEjecucionSimulacion2(agenteEjecucionMySql,anyo,idEnergyCommunity):
+    """
+        author: fdgregorio
+        
+        traductor: jnaveiro
+    
+        Definición: Método encargado de obtener los parametros de ejecución de base de datos
+        
+        Variables de entrada: agenteEjecucionMySql,anyo(int)
+        
+        Variables de salida: stringToResult(list)
+        
+        Objetos relevantes: Ninguno
+        
+        Librerías que se utilizan:
+        
+            1. numpy
+            2. datetime
+            3. logging
+    """
+    try:
+        # Mensaje de log al inicio del método
+        logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S') + " --> ComunidadesEnergeticasServicio.obtenerParametrosEjecucionSimulacion: Inicio   de la ejecución del método")
+
+        # Por cada usuario cargamos su lista de consumos
+        # private double consumos [][] = new double [3][7]
+        # Consultamos si nos toca ejecutar
+        sqlCommunityProcess = "SELECT * FROM leading_db.energy_community_process a WHERE ((a.event_id = 35 AND a.result=1000) OR (a.event_id = 40 AND a.result =1000) OR (a.event_id = 40 AND a.result =1001)) AND a.id_energy_community = "+ idEnergyCommunity +" AND a.start = (SELECT max(b.start) FROM leading_db.energy_community_process b WHERE a.id_energy_community = b.id_energy_community);"
+
+        rs_communityProcess = agenteEjecucionMySql.ejecutar(sqlCommunityProcess)
+
+        # Nos quedamos con el seleccionado por el random
+        idEnergyCommunityProcess = str(rs_communityProcess[0][0])
+        logging.info("idEnergyCommunity: " + str(idEnergyCommunity))
+
+        # # Fecha comienzo y de fin
+        logging.info("Anyo de la simulación: " + str(anyo))
+
+        # DateFormat sdfMYSQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        sFechaActual = datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S')
 
         stringToResult = []
         stringToResult.append(idEnergyCommunityProcess)
