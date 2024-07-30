@@ -57,9 +57,7 @@ def escritura(nombreArchivo,cups,coef):
     with open(nombreArchivo,"w") as g:
            g.writelines(todo[1:])
 
-if __name__ == "__main__":
-    archivoLectura = "CAU33_2024.txt"
-    archivoEscritura = "ES0026000010096279CP1FA000_2024.txt"
+def principal(archivoLectura,archivoEscritura):
     nombre,anyo = compruebaNombre(archivoLectura)
     contenido = lecturaArchivo(archivoLectura)
     if anyo%4 == 0:
@@ -75,3 +73,9 @@ if __name__ == "__main__":
     except:
         print("Número de horas no es exacto")
     
+
+
+if __name__ == "__main__":
+    archivoLectura = "CAU33_2024.txt"
+    archivoEscritura = "ES0026000010096279CP1FA000_2024.txt"
+    principal(archivoLectura,archivoEscritura)
