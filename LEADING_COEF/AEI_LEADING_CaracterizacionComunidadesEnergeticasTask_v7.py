@@ -5,7 +5,7 @@ from agents import MySqlAgent_AEI2022_LEADING
 import ComunidadesEnergeticasServicio as ComunidadesEnergeticasServicio
 from DTOs.constantes import ANYOELEGIDO as Anyo
 
-import ComprobacionEndesa as cedsa
+import ComprobacionCondiciontxt as cedsa
 
 import sys
 import logging
