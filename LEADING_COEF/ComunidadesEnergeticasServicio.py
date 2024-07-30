@@ -227,6 +227,7 @@ def almacenarDatosCalculadosTxt(ce,anyo):
         # Mensaje de log al inicio del método
         logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S') + " --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica: Fin de la ejecución del método")
 
+        return "CAU"+str(ce.getIdComunidadEnergetica())+"_"+str(anyo)+".txt"
 
     except Exception as e:
         raise SystemExit(e)
@@ -255,6 +256,9 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
             3. logging
     """
     try:
+        sqlTruncaTabla = "TRUNCATE TABLE leading_db.resultados;"
+        agenteEjecucionMySql.ejecutar(sqlTruncaTabla)
+
         # Mensaje de log al inicio del método
         logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S') + " --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica:   Inicio de la ejecución del método")
         print("Almacenamiento de los datos de la comunidad energética: ",ce.idComunidadEnergetica)
@@ -266,8 +270,8 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
             id_user = ce.getUsuariosComunidad()[itUsuario].getIdUsuario()
 
             #Actualizar consumos
-            sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s ; "
-            # sqlUpdateConsumos = " INSERT INTO leading_db.user_data (partition_coefficient, partition_energy,partition_surplus_energy,id_user_data) VALUES (%s, %s, %s) ON CONFLICT(first_name) DO UPDATE SET hire_date = EXCLUDED.hire_date"
+            # sqlUpdateConsumos = "UPDATE leading_db.user_data SET partition_coefficient = %s, partition_energy = %s , partition_surplus_energy = %s WHERE id_user_data = %s ; "
+            sqlUpdateConsumos = " INSERT INTO leading_db.resultados (fecha,id_user, consumption, partition_coefficient, partition_energy, partition_surplus_energy) VALUES (%s, %s, %s, %s, %s, %s);"
             listaInfo = []
             
             for itDiaConsumo in range(numDias):
@@ -279,19 +283,19 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
 
                     # Sólo si el día y la hora que en base de datos tienen consumos
                     if (consumosUsuarioIt[itDiaConsumo][itHoraConsumo] != None) :
-                        # CODIGO OPTIMIZADO CON PK (da más o menos igual de rendimiento)
-                        idUserData = ce.getUsuariosComunidad()[itUsuario].getConsumos()[itDiaConsumo][itHoraConsumo].getIdUserData()
-                        
-                        tuplaAux = (str(coeficienteReparto),str(energiaRepartida),str(energiaExcedente),str(idUserData))
+                        # CODIGO OPTIMIZADO CON PK (da más o menos igual de rendimiento)                        
+                        fechaAux = consumosUsuarioIt[itDiaConsumo][itHoraConsumo].getFcDatoConsumoHorario()
+                        consumoAux = consumosUsuarioIt[itDiaConsumo][itHoraConsumo].getValorDatoConsumoHorario()
+                        tuplaAux = (str(fechaAux),str(id_user),str(consumoAux),str(coeficienteReparto),str(energiaRepartida),str(energiaExcedente))
                         
                         listaInfo.append(tuplaAux)
-                        agenteEjecucionMySql.ejecutar(sqlUpdateConsumos%tuplaAux)
-                        agenteEjecucionMySql.commitTransaction()
+                        # agenteEjecucionMySql.ejecutar(sqlUpdateConsumos,tuplaAux)
+                        # agenteEjecucionMySql.commitTransaction()
 
             # comando = ""
             # for i in listaInfo:
             #     comando += i
-            # agenteEjecucionMySql.ejecutarMuchos(sqlUpdateConsumos,listaInfo)
+            agenteEjecucionMySql.ejecutarMuchos(sqlUpdateConsumos,listaInfo)
             
             # pocos = "SELECT * FROM leading_db.user_data WHERE id_user_data = " + str(idUserData)
             # print(agenteEjecucionMySql.ejecutar(pocos))
@@ -349,6 +353,9 @@ def obtenerParametrosEjecucionSimulacion(agenteEjecucionMySql,anyo):
             contadorResultados = contadorResultados + 1
 
         logging.info("Número de simulaciones pendientes: " + str(contadorResultados))
+
+        if contadorResultados == 0:
+            return None
 
         # Obtenemos un ramdom para el numero de resultados
         # int nRandom = (int) (Math.random() * ((contadorResultados+1) - 1)) + 1
