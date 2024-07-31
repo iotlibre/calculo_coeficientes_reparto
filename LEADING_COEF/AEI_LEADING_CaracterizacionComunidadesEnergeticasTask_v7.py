@@ -151,7 +151,7 @@ def simulador():
             #Paso 7.2: Almacenamiento de los datos registrados (almacenamos en la tabla correspondiente los datos obtenidos).
             print("Almacenando en la base de datos")
             logging.info("\n")
-            logging.info(tiem.now().__format__('%d/%m/%Y %H:%M:%S')+" -> Paso 7: Correccion del archivo txt para su uso en distribuidoras")
+            logging.info(tiem.now().__format__('%d/%m/%Y %H:%M:%S')+" -> Paso 7.2:  Almacenamiento de los datos registrados en la base de datos")
             logging.info("\n")
             ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, comunidadEnergetica)
 
