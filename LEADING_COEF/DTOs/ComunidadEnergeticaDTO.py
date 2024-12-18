@@ -483,6 +483,10 @@ class ComunidadEnergeticaDTO:
                     if (usuariosComunidad[it_cliente].getConsumos()[it_dia][it_hora] != None):
                         contadorCuotasParticipacion += 1
                         cuotaParticipacionCalculadaCE = cuotaParticipacionCalculadaCE + usuariosComunidad[it_cliente].getCoeficientesReparto()[it_dia][it_hora]
+
+                    else:
+                        contadorCuotasParticipacion += 1
+                        cuotaParticipacionCalculadaCE = cuotaParticipacionCalculadaCE + 0.0
                  #    for hora
              #     for dia
         
