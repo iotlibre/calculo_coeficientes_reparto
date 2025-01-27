@@ -1,6 +1,7 @@
 *.txt
 *.ini
 *.log
+*.sh
 __pycache__
 DTOS/__pycache__
 
