@@ -22,8 +22,7 @@ def obtenerDatosPVGIS_PV (pv_peakpower, pv_aspect, pv_angle, lat, lon):
     browser="0";
     outputformat="json";
     
-    # jsonRequest = "https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?";
-    jsonRequest = "https://re.jrc.ec.europa.eu/api/seriescalc?";
+    jsonRequest = "https://re.jrc.ec.europa.eu/api/v5_3/seriescalc?";
     jsonRequest = jsonRequest + "lat=" + lat + "&";
     jsonRequest = jsonRequest + "lon=" + lon + "&";
     jsonRequest = jsonRequest + "startyear=" + startyear + "&";
@@ -158,8 +157,7 @@ def obtenerDatosPVGIS_eolica (lat, lon):
     # Parametros fijos para la obtención de datos
     outputformat="json";
 
-    # jsonRequest = "https://re.jrc.ec.europa.eu/api/v5_2/tmy?"; #lo añado para usar el TMY
-    jsonRequest = "https://re.jrc.ec.europa.eu/api/tmy?"; #lo añado para usar el TMY
+    jsonRequest = "https://re.jrc.ec.europa.eu/api/v5_2/tmy?"; #lo añado para usar el TMY
     
     jsonRequest = jsonRequest + "lat=" + lat + "&";
     jsonRequest = jsonRequest + "lon=" + lon + "&";
