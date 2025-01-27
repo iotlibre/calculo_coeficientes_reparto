@@ -256,12 +256,12 @@ def almacenarDatosCalculadosComunidadEnergetica(agenteEjecucionMySql, ce):
             3. logging
     """
     try:
-        sqlTruncaTabla = "TRUNCATE TABLE leading_db.resultados;"
-        agenteEjecucionMySql.ejecutar(sqlTruncaTabla)
+        #sqlTruncaTabla = "TRUNCATE TABLE leading_db.resultados;"
+        #agenteEjecucionMySql.ejecutar(sqlTruncaTabla)
 
         # Mensaje de log al inicio del método
-        logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S') + " --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica:   Inicio de la ejecución del método")
-        print("Almacenamiento de los datos de la comunidad energética: ",ce.idComunidadEnergetica)
+        logging.info(datetime.datetime.now().__format__('%Y-%m-%d %H:%M:%S') + " --> ComunidadesEnergeticasServicio.almacenarDatosCalculadosComunidadEnergetica:   Inicio de la ejecucion del metodo")
+        print("Almacenamiento de los datos de la comunidad energetica: ",ce.idComunidadEnergetica)
         # Recorremos los distintos clientes de la comunidad
         for itUsuario in range(len(ce.getUsuariosComunidad())):
 
